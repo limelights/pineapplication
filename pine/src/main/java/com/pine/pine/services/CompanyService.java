@@ -16,7 +16,7 @@ public class CompanyService {
     }
 
     public void persistCompany(final Company company) {
-        companyRepository.save(company);
+        companyRepository.upsert(company);
     }
 
     public List<Company> getAll() {

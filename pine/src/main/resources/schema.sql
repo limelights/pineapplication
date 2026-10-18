@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS companies (
     id TEXT PRIMARY KEY NOT NULL,
-    name TEXT
+    name TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS accounts (

@@ -21,11 +21,11 @@ public class CompanyRepository {
         this.jdbcClient = jdbcClient;
     }
 
-    public Company save(Company company) {
+    public Company upsert(final Company company) {
         jdbcClient.sql("""
                 INSERT INTO companies (id, name)
                 VALUES (:id, :name)
-                ON CONFLICT(id) DO UPDATE SET name = excluded.name
+                ON CONFLICT(name) DO UPDATE SET name = excluded.name
                 """)
                 .param("id", company.getId(), Types.VARCHAR)
                 .param("name", company.getName(), Types.VARCHAR)
