@@ -1,0 +1,56 @@
+{
+  "source": {
+    "system": "paper-ledger",
+    "connection": "company-demo"
+  },
+  "export": {
+    "number": 45,
+    "id": "paper-export-45",
+    "createdAt": "2026-08-07T10:00:00Z"
+  },
+  "catalogue": [
+    {
+      "type": "ACCOUNT",
+      "uid": "urn:paper:account:cash",
+      "code": "CASH",
+      "displayName": "Corporate cash",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "ACCOUNT",
+      "uid": "urn:paper:account:payables",
+      "code": "PAYABLES",
+      "displayName": "Trade payables",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "ACCOUNT",
+      "uid": "urn:paper:account:expenses",
+      "code": "EXPENSES",
+      "displayName": "Operating expenses reopened",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "DIMENSION",
+      "uid": "urn:paper:dimension:region",
+      "displayName": "Sales region",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "DIMENSION_VALUE",
+      "uid": "urn:paper:region:north",
+      "dimensionUid": "urn:paper:dimension:region",
+      "code": "NORTH",
+      "displayName": "Northern region",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "DIMENSION_VALUE",
+      "uid": "urn:paper:region:east",
+      "dimensionUid": "urn:paper:dimension:region",
+      "code": "EAST",
+      "displayName": "Eastern region",
+      "state": "ACTIVE"
+    }
+  ]
+}

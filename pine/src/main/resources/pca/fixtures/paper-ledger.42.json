@@ -1,0 +1,48 @@
+{
+  "source": {
+    "system": "paper-ledger",
+    "connection": "company-demo"
+  },
+  "export": {
+    "number": 42,
+    "id": "paper-export-42",
+    "createdAt": "2026-08-03T10:00:00Z"
+  },
+  "catalogue": [
+    {
+      "type": "ACCOUNT",
+      "uid": "urn:paper:account:cash",
+      "code": "CASH",
+      "displayName": "Primary cash account",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "ACCOUNT",
+      "uid": "urn:paper:account:expenses",
+      "code": "EXPENSES",
+      "displayName": "Operating expenses",
+      "state": "INACTIVE"
+    },
+    {
+      "type": "ACCOUNT",
+      "uid": "urn:paper:account:payables",
+      "code": "PAYABLES",
+      "displayName": "Trade payables",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "DIMENSION",
+      "uid": "urn:paper:dimension:region",
+      "displayName": "Sales region",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "DIMENSION_VALUE",
+      "uid": "urn:paper:region:north",
+      "dimensionUid": "urn:paper:dimension:region",
+      "code": "NORTH",
+      "displayName": "Northern region",
+      "state": "ACTIVE"
+    }
+  ]
+}

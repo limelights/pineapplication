@@ -1,0 +1,32 @@
+{
+  "source": {
+    "system": "paper-ledger",
+    "connection": "company-demo"
+  },
+  "export": {
+    "number": 44,
+    "id": "paper-export-44",
+    "createdAt": "2026-08-06T10:00:00Z"
+  },
+  "catalogue": [
+    {
+      "type": "ACCOUNT",
+      "uid": "urn:paper:account:cash",
+      "code": "CASH",
+      "displayName": "Cash changed by quarantined snapshot",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "ACCOUNT",
+      "code": "MYSTERY",
+      "displayName": "Record without a stable identifier",
+      "state": "ACTIVE"
+    },
+    {
+      "type": "DIMENSION",
+      "uid": "urn:paper:dimension:region",
+      "displayName": "Sales region",
+      "state": "ACTIVE"
+    }
+  ]
+}
