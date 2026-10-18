@@ -1,4 +1,4 @@
-package com.pine.pine.models.paperledger;
+package com.pine.pine.models.snapshots.paperledger;
 
 import tools.jackson.databind.annotation.JsonDeserialize;
 

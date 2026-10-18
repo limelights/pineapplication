@@ -1,8 +1,8 @@
 package com.pine.pine.parser;
 
-import com.pine.pine.models.EmberSnapshot;
-import com.pine.pine.models.NorthstarSnapshot;
-import com.pine.pine.models.paperledger.PaperLedgerSnapshot;
+import com.pine.pine.models.snapshots.EmberSnapshot;
+import com.pine.pine.models.snapshots.NorthstarSnapshot;
+import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
 
 public class Parser {
     public static ParseResult fromEmber(EmberSnapshot snapshot) {

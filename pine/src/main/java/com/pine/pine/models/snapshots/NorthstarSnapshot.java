@@ -1,4 +1,4 @@
-package com.pine.pine.models;
+package com.pine.pine.models.snapshots;
 
 import java.util.List;
 

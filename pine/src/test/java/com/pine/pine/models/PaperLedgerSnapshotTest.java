@@ -1,6 +1,6 @@
 package com.pine.pine.models;
 
-import com.pine.pine.models.paperledger.PaperLedgerSnapshot;
+import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
 import org.junit.jupiter.api.Test;
 
 import java.text.MessageFormat;
