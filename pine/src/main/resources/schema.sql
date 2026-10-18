@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS companies (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT
+);
+
+CREATE TABLE IF NOT EXISTS accounts (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT NOT NULL,
+    name TEXT
+);

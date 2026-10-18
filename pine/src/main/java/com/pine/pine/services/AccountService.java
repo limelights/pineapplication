@@ -4,7 +4,9 @@ import com.pine.pine.models.Account;
 import com.pine.pine.models.snapshots.EmberSnapshot;
 import com.pine.pine.models.snapshots.NorthstarSnapshot;
 import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AccountService {
     public Account createAccountFromSnapshot(final EmberSnapshot snapshot) {
         var ledgerAccount = snapshot.ledger().entrySet().iterator().next();

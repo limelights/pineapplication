@@ -5,6 +5,9 @@ import com.pine.pine.models.snapshots.NorthstarSnapshot;
 import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
 import com.pine.pine.parser.ParseResult;
 import com.pine.pine.parser.Parser;
+import com.pine.pine.repositories.CompanyRepository;
+import com.pine.pine.services.CompanyService;
+import com.pine.pine.services.ImportService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,18 +23,21 @@ public class SnapshotController {
 
     private final ObjectMapper objectMapper;
 
-    public SnapshotController(ObjectMapper objectMapper) {
+    private final ImportService importService;
+
+    public SnapshotController(ObjectMapper objectMapper, ImportService importService) {
         this.objectMapper = objectMapper;
+        this.importService = importService;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ParseResult importSnapshot(@RequestBody Map<String, Object> body) {
         if (body.containsKey("ledger")) {
-            return Parser.fromEmber(objectMapper.convertValue(body, EmberSnapshot.class));
+            return importService.fromEmber(objectMapper.convertValue(body, EmberSnapshot.class));
         } else if (body.containsKey("provider")) {
-            return Parser.fromNorthStar(objectMapper.convertValue(body, NorthstarSnapshot.class));
+            return importService.fromNorthStar(objectMapper.convertValue(body, NorthstarSnapshot.class));
         } else if (body.containsKey("source")) {
-            return Parser.fromPaperLedger(objectMapper.convertValue(body, PaperLedgerSnapshot.class));
+            return importService.fromPaperLedger(objectMapper.convertValue(body, PaperLedgerSnapshot.class));
         }
         return new ParseResult("unknown", ParseResult.INCOMPLETE);
     }

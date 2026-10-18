@@ -1,3 +1,11 @@
 spring:
   application:
     name: pine
+  datasource:
+    url: ${PINE_DATABASE_URL:jdbc:sqlite:./pine.db}
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 1
+  sql:
+    init:
+      mode: always
