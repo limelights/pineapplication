@@ -4,6 +4,8 @@ import com.pine.pine.models.Company;
 import com.pine.pine.repositories.CompanyRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CompanyService {
 
@@ -15,5 +17,9 @@ public class CompanyService {
 
     public void persistCompany(final Company company) {
         companyRepository.save(company);
+    }
+
+    public List<Company> getAll() {
+        return companyRepository.findAll();
     }
 }

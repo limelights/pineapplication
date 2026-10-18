@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Companies</title>
+</head>
+<body>
+    <h1>Companies</h1>
+    <p th:if="${#lists.isEmpty(companies)}">No imported companies yet</p>
+    <table th:unless="${#lists.isEmpty(companies)}">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="company : ${companies}">
+                <td th:text="${company.name}"></td>
+                <td th:text="${company.id}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

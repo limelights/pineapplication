@@ -15,7 +15,7 @@ public class AccountServiceTest {
     @Test
     void creates_accounts_from_snapshot_northstar() throws IOException {
         var snap = (NorthstarSnapshot) SnapshotHelper.asSnapshot("northstar-books.7.json", NorthstarSnapshot.class);
-        var firstAccountInSnapshot = snap.accounts().getFirst();
+        var firstAccountInSnapshot = snap.getProviderAccounts().getFirst();
 
         var accountService = new AccountService();
         var account = accountService.createAccountFromSnapshot(snap);
@@ -26,7 +26,7 @@ public class AccountServiceTest {
     @Test
     void creates_accounts_from_snapshot_ember() throws IOException {
         var snap = (EmberSnapshot) SnapshotHelper.asSnapshot("ember-accounting.9002.json", EmberSnapshot.class);
-        var firstAccountInSnapshot = snap.ledger().entrySet().iterator().next();
+        var firstAccountInSnapshot = snap.getLedger().entrySet().iterator().next();
 
         var accountService = new AccountService();
         var account = accountService.createAccountFromSnapshot(snap);
@@ -37,7 +37,7 @@ public class AccountServiceTest {
     @Test
     void creates_accounts_from_snapshot_paper_ledger() throws IOException {
         var snap = (PaperLedgerSnapshot) SnapshotHelper.asSnapshot("paper-ledger.43.json", PaperLedgerSnapshot.class);
-        var firstAccountInSnapshot = snap.catalogue().getFirst();
+        var firstAccountInSnapshot = snap.getCatalogue().getFirst();
 
         var accountService = new AccountService();
         var account = accountService.createAccountFromSnapshot(snap);

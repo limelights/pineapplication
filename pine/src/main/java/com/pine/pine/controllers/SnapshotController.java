@@ -1,5 +1,6 @@
 package com.pine.pine.controllers;
 
+import com.pine.pine.models.Accounting;
 import com.pine.pine.models.snapshots.EmberSnapshot;
 import com.pine.pine.models.snapshots.NorthstarSnapshot;
 import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
@@ -22,7 +23,6 @@ import java.util.Map;
 public class SnapshotController {
 
     private final ObjectMapper objectMapper;
-
     private final ImportService importService;
 
     public SnapshotController(ObjectMapper objectMapper, ImportService importService) {
@@ -32,13 +32,14 @@ public class SnapshotController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ParseResult importSnapshot(@RequestBody Map<String, Object> body) {
+        Accounting model = null;
         if (body.containsKey("ledger")) {
-            return importService.fromEmber(objectMapper.convertValue(body, EmberSnapshot.class));
+            model = objectMapper.convertValue(body, EmberSnapshot.class);
         } else if (body.containsKey("provider")) {
-            return importService.fromNorthStar(objectMapper.convertValue(body, NorthstarSnapshot.class));
+            model = objectMapper.convertValue(body, NorthstarSnapshot.class);
         } else if (body.containsKey("source")) {
-            return importService.fromPaperLedger(objectMapper.convertValue(body, PaperLedgerSnapshot.class));
+            model = objectMapper.convertValue(body, PaperLedgerSnapshot.class);
         }
-        return new ParseResult("unknown", ParseResult.INCOMPLETE);
+        return importService.importSnapshot(model);
     }
 }

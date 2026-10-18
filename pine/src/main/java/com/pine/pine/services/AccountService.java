@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountService {
     public Account createAccountFromSnapshot(final EmberSnapshot snapshot) {
-        var ledgerAccount = snapshot.ledger().entrySet().iterator().next();
+        var ledgerAccount = snapshot.getLedger().entrySet().iterator().next();
         var account = ledgerAccount.getValue();
         return createAccount(account.number(), account.title());
     }
 
     public Account createAccountFromSnapshot(final NorthstarSnapshot snapshot) {
-        var account = snapshot.accounts().getFirst();
-        return createAccount(account.id(), account.name());
+        var account = snapshot.getAccounts().getFirst();
+        return createAccount(account.getId(), account.getName());
     }
 
     public Account createAccountFromSnapshot(final PaperLedgerSnapshot snapshot) {
-        var account = snapshot.catalogue().getFirst();
+        var account = snapshot.getCatalogue().getFirst();
         return createAccount(account.uid(), account.displayName().name());
     }
 
