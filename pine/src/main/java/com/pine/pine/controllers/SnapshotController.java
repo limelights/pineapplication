@@ -2,7 +2,7 @@ package com.pine.pine.controllers;
 
 import com.pine.pine.models.EmberSnapshot;
 import com.pine.pine.models.NorthstarSnapshot;
-import com.pine.pine.models.PaperLedgerSnapshot;
+import com.pine.pine.models.paperledger.PaperLedgerSnapshot;
 import com.pine.pine.parser.ParseResult;
 import com.pine.pine.parser.Parser;
 import org.springframework.http.MediaType;

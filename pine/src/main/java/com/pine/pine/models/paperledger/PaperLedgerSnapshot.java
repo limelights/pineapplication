@@ -1,4 +1,6 @@
-package com.pine.pine.models;
+package com.pine.pine.models.paperledger;
+
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 
@@ -14,8 +16,10 @@ public record PaperLedgerSnapshot(Source source, Export export, List<CatalogueEn
             String type,
             String uid,
             String dimensionUid,
-            String code,
-            String displayName,
+            @JsonDeserialize(using = PaperLedgerCodeDeserializer.class) String code,
+            @JsonDeserialize(using = PaperLedgerDisplayNameDeserializer.class) DisplayName displayName,
             String state) {
     }
+
+    public record DisplayName(String name, String locale) {}
 }

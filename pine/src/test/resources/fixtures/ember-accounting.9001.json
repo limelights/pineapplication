@@ -1,0 +1,44 @@
+{
+  "installation": "company-demo",
+  "serial": 9001,
+  "captured_at": "2026-08-01T11:00:00Z",
+  "ledger": {
+    "bank-key": {
+      "number": "BANK",
+      "title": "Settlement bank",
+      "is_archived": false
+    },
+    "cost-key": {
+      "number": "COSTS",
+      "title": "Service costs",
+      "is_archived": false
+    }
+  },
+  "tracking": {
+    "project": {
+      "label": "Project",
+      "members": {
+        "general": {
+          "value": "GENERAL",
+          "label": "General project",
+          "is_archived": false
+        },
+        "launch": {
+          "value": "LAUNCH",
+          "label": "Launch",
+          "is_archived": false
+        }
+      }
+    },
+    "region": {
+      "label": "Region",
+      "members": {
+        "general": {
+          "value": "GENERAL",
+          "label": "General region",
+          "is_archived": false
+        }
+      }
+    }
+  }
+}

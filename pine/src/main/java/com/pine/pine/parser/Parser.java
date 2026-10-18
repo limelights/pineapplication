@@ -2,7 +2,7 @@ package com.pine.pine.parser;
 
 import com.pine.pine.models.EmberSnapshot;
 import com.pine.pine.models.NorthstarSnapshot;
-import com.pine.pine.models.PaperLedgerSnapshot;
+import com.pine.pine.models.paperledger.PaperLedgerSnapshot;
 
 public class Parser {
     public static ParseResult fromEmber(EmberSnapshot snapshot) {

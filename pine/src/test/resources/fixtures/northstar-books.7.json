@@ -1,0 +1,40 @@
+{
+  "provider": "northstar-books",
+  "connectionId": "company-demo",
+  "generation": 7,
+  "generatedAt": "2026-08-01T09:00:00Z",
+  "accounts": [
+    {
+      "id": "account-bank",
+      "code": "BANK",
+      "name": "Operating bank",
+      "enabled": true
+    },
+    {
+      "id": "account-revenue",
+      "code": "REVENUE",
+      "name": "Product revenue",
+      "enabled": true
+    }
+  ],
+  "dimensions": [
+    {
+      "id": "dimension-department",
+      "name": "Department",
+      "values": [
+        {
+          "id": "department-sales",
+          "code": "SALES",
+          "name": "Sales",
+          "enabled": true
+        },
+        {
+          "id": "department-operations",
+          "code": "OPS",
+          "name": "Operations",
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}

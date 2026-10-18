@@ -1,0 +1,54 @@
+{
+  "installation": "company-demo",
+  "serial": 9002,
+  "captured_at": "2026-08-04T11:00:00Z",
+  "ledger": {
+    "bank-key": {
+      "number": "BANK",
+      "title": "Main settlement bank",
+      "is_archived": false
+    },
+    "cost-key": {
+      "number": "COSTS",
+      "title": "Service costs",
+      "is_archived": true
+    },
+    "tax-key": {
+      "number": "TAX",
+      "title": "Tax balance",
+      "is_archived": false
+    }
+  },
+  "tracking": {
+    "project": {
+      "label": "Client project",
+      "members": {
+        "general": {
+          "value": "GENERAL",
+          "label": "General project",
+          "is_archived": false
+        },
+        "launch": {
+          "value": "LAUNCH",
+          "label": "Launch phase",
+          "is_archived": false
+        }
+      }
+    },
+    "region": {
+      "label": "Region",
+      "members": {
+        "general": {
+          "value": "GENERAL",
+          "label": "General region",
+          "is_archived": false
+        },
+        "international": {
+          "value": "INTERNATIONAL",
+          "label": "International",
+          "is_archived": false
+        }
+      }
+    }
+  }
+}
