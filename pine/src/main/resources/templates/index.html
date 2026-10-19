@@ -2,34 +2,91 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Companies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Company accounts</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 2rem;
+            color: #20242a;
+            background: #f5f6f8;
+            font: 1rem/1.5 system-ui, sans-serif;
+        }
+        main { max-width: 100rem; margin: 0 auto; }
+        h2 { margin: 0; font-size: 1.25rem; overflow-wrap: anywhere; }
+        p { margin: 0.5rem 0; }
+        code { font-size: 0.9em; overflow-wrap: anywhere; }
+        .company {
+            margin-bottom: 1.5rem;
+            border: 1px solid #cbd1d9;
+            border-radius: 0.5rem;
+            background: white;
+            overflow: hidden;
+        }
+        .company-header { padding: 1rem 1.25rem; }
+        .company-details { color: #48515f; overflow-wrap: anywhere; }
+        .empty { padding: 0 1.25rem 1rem; }
+        .account-table { overflow-x: auto; }
+        .account-table:focus-visible { outline: 3px solid #2457b2; outline-offset: -3px; }
+        table { width: 100%; min-width: 48rem; border-collapse: collapse; table-layout: fixed; }
+        th, td {
+            padding: 0.8rem 1rem;
+            border-top: 1px solid #dce0e6;
+            text-align: left;
+            vertical-align: top;
+            overflow-wrap: anywhere;
+        }
+        th { background: #e9edf2; font-size: 0.9rem; }
+        th:first-child { width: 40%; }
+        th:nth-child(2) { width: 25%; }
+        th:nth-child(3) { width: 25%; }
+        th:last-child { width: 10%; }
+        tbody tr:nth-child(even) { background: #f7f8fa; }
+        @media (max-width: 40rem) {
+            body { padding: 1rem; }
+            .company-header { padding: 1rem; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Companies</h1>
-    <p th:if="${#lists.isEmpty(companies)}">No imported companies yet</p>
-    <table th:unless="${#lists.isEmpty(companies)}">
-        <thead>
-            <tr>
-                <th scope="col">Name</th>
-                <th scope="col">ID</th>
-                <th scope="col">Accounts</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="company : ${companies}">
-                <td th:text="${company.name}"></td>
-                <td th:text="${company.id}"></td>
-                <td th:with="accounts=${accountsByCompany[company.id]}">
-                    <p th:if="${#lists.isEmpty(accounts)}">No accounts yet</p>
-                    <ul th:unless="${#lists.isEmpty(accounts)}">
-                        <li th:each="account : ${accounts}">
-                            <span th:text="${account.name}"></span>
-                            (<span th:text="${account.id}"></span>)
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <main>
+        <p th:if="${#lists.isEmpty(companies)}">No imported companies yet.</p>
+        <section class="company" th:each="company : ${companies}"
+                 th:with="accounts=${accountsByCompany[company.id]}"
+                 th:attr="aria-labelledby=${'company-' + company.id}">
+            <header class="company-header">
+                <h2 th:id="${'company-' + company.id}" th:text="${company.name}"></h2>
+                <p class="company-details">
+                    Company ID: <code th:text="${company.id}"></code>
+                    · Accounts: <span th:text="${#lists.size(accounts)}"></span>
+                </p>
+            </header>
+            <p class="empty" th:if="${#lists.isEmpty(accounts)}">No accounts yet.</p>
+            <div class="account-table" th:unless="${#lists.isEmpty(accounts)}"
+                 role="region" tabindex="0" th:attr="aria-label=${'Accounts for ' + company.name}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Composite key</th>
+                            <th scope="col">Account ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="account : ${accounts}">
+                            <td><code th:text="${'(' + account.key.provider + ', ' + account.key.connectionId + ', ' + account.key.externalId + ')'}"></code></td>
+                            <td><code th:text="${account.id}"></code></td>
+                            <td th:text="${account.name}"></td>
+                            <td>
+                                <span th:text="${account.key.provider == 'ember' ? (account.status ? 'Inactive' : 'Active') : (account.status ? 'Active' : 'Inactive')}"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 </body>
 </html>

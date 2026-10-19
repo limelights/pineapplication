@@ -1,0 +1,2 @@
+* Accounts do not have a reliable identifier. It's easy to make it globally unique.
+  * In order to preserve renames, updates etc., we need to have a composite key like "ember+installation+number", "northstar+connectionId+id" and "paperledger+source-connection+uid"?
