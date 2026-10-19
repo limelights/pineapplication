@@ -21,7 +21,7 @@ public class AccountAuditLogService {
         return accountAuditLogRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
-    void produceAuditLog(final Account account, final String reason) {
+    public void produceAuditLog(final Account account, final String reason) {
         final AccountAuditLog logEntry = new AccountAuditLog(account, reason);
         accountAuditLogRepository.save(logEntry);
     }

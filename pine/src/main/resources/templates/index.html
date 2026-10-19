@@ -48,6 +48,10 @@
         table.audit-log th:nth-child(3) { width: 22%; }
         table.audit-log th:last-child { width: 30%; }
         tbody tr:nth-child(even) { background: #f7f8fa; }
+        .description-form { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 5px; margin-top: 5px; }
+        .description-form textarea { width: 200px; max-width: 100%; padding: 5px; font: inherit; resize: vertical; }
+        .description-form button { padding: 5px; font: inherit; cursor: pointer; }
+        .account-description { display: block; margin-top: 5px; font-size: 11px; text-align: right; white-space: pre-wrap; }
     </style>
 </head>
 <body>
@@ -78,9 +82,21 @@
                     </thead>
                     <tbody>
                         <tr th:each="account : ${accounts}">
-                            <td><code th:text="${'(' + account.key.provider + ', ' + account.key.connectionId + ', ' + account.key.externalId + ')'}"></code></td>
+                            <td>
+                                <code th:text="${'(' + account.key.provider + ', ' + account.key.connectionId + ', ' + account.key.externalId + ')'}"></code>
+                                <small class="account-description" th:if="${!#strings.isEmpty(account.description)}"
+                                       th:text="${account.description}"></small>
+                            </td>
                             <td><code th:text="${account.id}"></code></td>
-                            <td th:text="${account.name}"></td>
+                            <td>
+                                <span th:text="${account.name}"></span>
+                                <form class="description-form" method="post"
+                                      th:action="@{/api/accounts/{accountId}/description(accountId=${account.getKey().asSlug()})}">
+                                    <textarea name="description" rows="2" placeholder="Description"
+                                              th:attr="aria-label=${'Description for ' + account.name}"></textarea>
+                                    <button type="submit">save</button>
+                                </form>
+                            </td>
                             <td>
                                 <span th:text="${account.key.provider == 'ember' ? (account.status ? 'Inactive' : 'Active') : (account.status ? 'Active' : 'Inactive')}"></span>
                             </td>

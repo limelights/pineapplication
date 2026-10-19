@@ -19,6 +19,9 @@ public class Account {
     @JoinColumn(name = "company_id")
     private Company company;
 
+    @Column(nullable = true)
+    private String description;
+
     protected Account() {
     }
 
@@ -61,5 +64,13 @@ public class Account {
 
     public String getRevision() {
         return key.getRevision();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -1,6 +1,7 @@
 package com.pine.pine.services;
 
 import com.pine.pine.models.Account;
+import com.pine.pine.models.AccountId;
 import com.pine.pine.models.Company;
 import com.pine.pine.models.snapshots.EmberSnapshot;
 import com.pine.pine.models.snapshots.NorthstarSnapshot;
@@ -68,5 +69,9 @@ public class AccountService {
     public List<Account> getByCompanyId(final Company company) {
         return accountRepository.findByCompany(company,
                 Sort.by("key.provider", "key.connectionId", "key.externalId"));
+    }
+
+    public Account getByAccountId(final AccountId accountId) {
+        return accountRepository.getByKey(accountId);
     }
 }

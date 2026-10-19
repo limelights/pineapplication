@@ -12,4 +12,6 @@ public interface AccountRepository extends JpaRepository<Account, AccountId> {
     List<Account> findByCompany(Company company, Sort sort);
 
     List<Account> findByKeyProviderAndKeyConnectionId(String provider, String connectionId);
+
+    Account getByKey(AccountId accountId);
 }

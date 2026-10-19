@@ -32,6 +32,11 @@ public class AccountId implements Serializable {
         this.revision = requireNonBlank(revision, "revision");
     }
 
+    public static AccountId fromString(final String accountId) {
+        final String[] splits = accountId.split("_");
+        return new AccountId(splits[0], splits[1], splits[2], splits[3]);
+    }
+
     public String getProvider() {
         return provider;
     }
@@ -45,6 +50,10 @@ public class AccountId implements Serializable {
     }
 
     public String getRevision() { return revision; }
+
+    public String asSlug() {
+        return String.format("%s_%s_%s_%s", this.provider, this.connectionId, this.externalId, this.revision);
+    }
 
     @Override
     public boolean equals(Object other) {
