@@ -9,7 +9,7 @@ public class AccountAuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "account_provider", referencedColumnName = "provider"),
             @JoinColumn(name = "account_connection_id", referencedColumnName = "connection_id"),
