@@ -58,13 +58,14 @@ public class AccountService {
                                 provider, connectionId, account.getKey().getExternalId()
                         );
                 if (latestRevisionsOfAccount.isPresent()) {
-                    if (latestRevisionsOfAccount.get().getRevision() > account.getRevision()) {
-                        throw new IllegalArgumentException("Account Revision is older than current revision");
+                    var latestAccount = latestRevisionsOfAccount.get();
+                    if (latestAccount.getRevision() > account.getRevision()) {
+                        accountAuditLogService.produceAuditLog(latestAccount, "Adding account rejected; higher revision found");
+                    } else {
+                        account.setDescription(latestRevisionsOfAccount.get().getDescription());
                     }
-                    account.setDescription(latestRevisionsOfAccount.get().getDescription());
                 }
             });
-
 
             accountRepository.saveAll(accountsScheduledForRemoval);
             accountRepository.saveAll(accounts);

@@ -19,15 +19,15 @@ import static org.mockito.Mockito.*;
 
 public class AccountServiceTest {
 
-    private final AccountRepository accountRepository = mock(AccountRepository.class);
-    private final AccountAuditLogService accountAuditLogService = mock(AccountAuditLogService.class);
+    private final AccountRepository mockAccountRepository = mock(AccountRepository.class);
+    private final AccountAuditLogService mockAccountAuditLogService = mock(AccountAuditLogService.class);
 
     @Test
     void creates_accounts_from_snapshot_northstar() throws IOException {
         var snap = (NorthstarSnapshot) SnapshotHelper.asSnapshot("northstar-books.7.json", NorthstarSnapshot.class);
         var firstAccountInSnapshot = snap.getProviderAccounts().getFirst();
 
-        var accountService = new AccountService(accountRepository, accountAuditLogService);
+        var accountService = new AccountService(mockAccountRepository, mockAccountAuditLogService);
         var account = accountService.createAccountFromSnapshot(snap);
         assertEquals(firstAccountInSnapshot.name(), account.getName());
         assertEquals(firstAccountInSnapshot.id(), account.getId());
@@ -38,7 +38,7 @@ public class AccountServiceTest {
         var snap = (EmberSnapshot) SnapshotHelper.asSnapshot("ember-accounting.9002.json", EmberSnapshot.class);
         var firstAccountInSnapshot = snap.getLedger().entrySet().iterator().next();
 
-        var accountService = new AccountService(accountRepository, accountAuditLogService);
+        var accountService = new AccountService(mockAccountRepository, mockAccountAuditLogService);
         var account = accountService.createAccountFromSnapshot(snap);
         assertEquals(firstAccountInSnapshot.getValue().title(), account.getName());
         assertEquals(firstAccountInSnapshot.getValue().number(), account.getId());
@@ -49,7 +49,7 @@ public class AccountServiceTest {
         var snap = (PaperLedgerSnapshot) SnapshotHelper.asSnapshot("paper-ledger.43.json", PaperLedgerSnapshot.class);
         var firstAccountInSnapshot = snap.getCatalogue().getFirst();
 
-        var accountService = new AccountService(accountRepository, accountAuditLogService);
+        var accountService = new AccountService(mockAccountRepository, mockAccountAuditLogService);
         var account = accountService.createAccountFromSnapshot(snap);
         assertEquals(firstAccountInSnapshot.displayName().name(), account.getName());
         assertEquals(firstAccountInSnapshot.uid(), account.getId());
@@ -60,29 +60,25 @@ public class AccountServiceTest {
         var snap9001 = (EmberSnapshot) SnapshotHelper.asSnapshot("ember-accounting.9001.json", EmberSnapshot.class);
         var snap9002 = (EmberSnapshot) SnapshotHelper.asSnapshot("ember-accounting.9002.json", EmberSnapshot.class);
 
-        var accountService = new AccountService(accountRepository, accountAuditLogService);
+        var accountService = new AccountService(mockAccountRepository, mockAccountAuditLogService);
         var a1 = accountService.createAccountFromSnapshot(snap9001);
         var a2 = accountService.createAccountFromSnapshot(snap9002);
 
-        when(accountRepository.findFirstByKeyProviderAndKeyConnectionIdAndKeyExternalIdOrderByKeyRevisionDesc(
+        when(mockAccountRepository.findFirstByKeyProviderAndKeyConnectionIdAndKeyExternalIdOrderByKeyRevisionDesc(
                 anyString(), anyString(), anyString()
         )).thenReturn(Optional.of(a2));
 
+        accountService.synchronizeAccounts("ember", "company-demo", List.of(a1));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            accountService.synchronizeAccounts(
-                    "ember", "company-demo", List.of(a1));
-        });
-
-        accountAuditLogService.produceAuditLog(a1, "Adding account rejected; higher revision found");
         final ArgumentCaptor<Account> accountArgumentCaptor = ArgumentCaptor.forClass(Account.class);
         final ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(accountAuditLogService).produceAuditLog(accountArgumentCaptor.capture(), stringArgumentCaptor.capture());
+        verify(mockAccountAuditLogService, atLeastOnce()).produceAuditLog(accountArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
-        final Account capturedAccount = accountArgumentCaptor.getValue();
-        final String capturedReason = stringArgumentCaptor.getValue();
+        final Account capturedAccount = accountArgumentCaptor.getAllValues().getFirst();
+        final String capturedReason = stringArgumentCaptor.getAllValues().getFirst();
 
         assertEquals("Adding account rejected; higher revision found", capturedReason);
         assertEquals(a1.getRevision(), capturedAccount.getRevision());
+        verify(mockAccountAuditLogService, times(2)).produceAuditLog(any(), any());
     }
 }
