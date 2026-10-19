@@ -7,6 +7,7 @@ import com.pine.pine.models.Company;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PaperLedgerSnapshot implements Accounting {
     private Source source;
@@ -71,7 +72,11 @@ public class PaperLedgerSnapshot implements Accounting {
         }
         return catalogue.stream()
                 .filter(entry -> "ACCOUNT".equals(entry.type()))
-                .map(entry -> new Account(entry.displayName().name(), entry.uid()))
+                .map(entry -> {
+                    final Account account = new Account(entry.displayName().name(), entry.uid());
+                    account.setStatus(Objects.equals(entry.state, "ACTIVE"));
+                    return account;
+                })
                 .toList();
     }
 

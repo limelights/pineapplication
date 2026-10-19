@@ -12,12 +12,22 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">ID</th>
+                <th scope="col">Accounts</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="company : ${companies}">
                 <td th:text="${company.name}"></td>
                 <td th:text="${company.id}"></td>
+                <td th:with="accounts=${accountsByCompany[company.id]}">
+                    <p th:if="${#lists.isEmpty(accounts)}">No accounts yet</p>
+                    <ul th:unless="${#lists.isEmpty(accounts)}">
+                        <li th:each="account : ${accounts}">
+                            <span th:text="${account.name}"></span>
+                            (<span th:text="${account.id}"></span>)
+                        </li>
+                    </ul>
+                </td>
             </tr>
         </tbody>
     </table>

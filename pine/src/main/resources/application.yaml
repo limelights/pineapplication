@@ -6,6 +6,10 @@ spring:
     driver-class-name: org.sqlite.JDBC
     hikari:
       maximum-pool-size: 1
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
   sql:
     init:
-      mode: always
+      mode: never

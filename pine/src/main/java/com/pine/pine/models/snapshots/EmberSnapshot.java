@@ -91,7 +91,11 @@ public class EmberSnapshot implements Accounting {
             return List.of();
         }
         return ledger.values().stream()
-                .map(entry -> new Account(entry.title(), entry.number()))
+                .map(entry -> {
+                    var account = new Account(entry.title(), entry.number());
+                    account.setStatus(entry.isArchived());
+                    return account;
+                })
                 .toList();
     }
 
@@ -99,4 +103,5 @@ public class EmberSnapshot implements Accounting {
     public Company getCompany() {
         return new Company(this.installation);
     }
+
 }

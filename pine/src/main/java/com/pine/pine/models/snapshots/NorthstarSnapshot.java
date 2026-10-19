@@ -2,6 +2,7 @@ package com.pine.pine.models.snapshots;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pine.pine.models.Account;
 import com.pine.pine.models.Accounting;
 import com.pine.pine.models.Company;
 
@@ -13,14 +14,14 @@ public class NorthstarSnapshot implements Accounting {
     private Long generation;
     private String generatedAt;
     @JsonProperty("accounts")
-    private List<Account> providerAccounts;
+    private List<NorthStarAccount> providerAccounts;
     private List<Dimension> dimensions;
 
     public NorthstarSnapshot() {
     }
 
     public NorthstarSnapshot(String provider, String connectionId, Long generation, String generatedAt,
-                             List<Account> accounts, List<Dimension> dimensions) {
+                             List<NorthStarAccount> accounts, List<Dimension> dimensions) {
         this.provider = provider;
         this.connectionId = connectionId;
         this.generation = generation;
@@ -61,11 +62,11 @@ public class NorthstarSnapshot implements Accounting {
         this.generatedAt = generatedAt;
     }
 
-    public List<Account> getProviderAccounts() {
+    public List<NorthStarAccount> getProviderAccounts() {
         return providerAccounts;
     }
 
-    public void setProviderAccounts(List<Account> providerAccounts) {
+    public void setProviderAccounts(List<NorthStarAccount> providerAccounts) {
         this.providerAccounts = providerAccounts;
     }
 
@@ -77,7 +78,7 @@ public class NorthstarSnapshot implements Accounting {
         this.dimensions = dimensions;
     }
 
-    public record Account(String id, String code, String name, Boolean enabled) {
+    public record NorthStarAccount(String id, String code, String name, Boolean enabled) {
     }
 
     public record Dimension(String id, String name, List<DimensionValue> values) {
@@ -93,7 +94,11 @@ public class NorthstarSnapshot implements Accounting {
             return List.of();
         }
         return providerAccounts.stream()
-                .map(account -> new com.pine.pine.models.Account(account.name(), account.id()))
+                .map(nsaccount -> {
+                    var account = new Account(nsaccount.name(), nsaccount.id());
+                    account.setStatus(nsaccount.enabled());
+                    return account;
+                })
                 .toList();
     }
 

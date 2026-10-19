@@ -8,6 +8,7 @@ import com.pine.pine.models.snapshots.NorthstarSnapshot;
 import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
 import com.pine.pine.parser.ParseResult;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +24,7 @@ public class ImportService {
         this.companyService = companyService;
     }
 
+    @Transactional
     public ParseResult importSnapshot(final Accounting snapshot) {
         if (snapshot instanceof EmberSnapshot) {
             return fromEmber((EmberSnapshot) snapshot);
@@ -39,28 +41,32 @@ public class ImportService {
     }
 
     private ParseResult fromEmber(final EmberSnapshot snapshot) {
-        var name = snapshot.getInstallation();
-        var company = new Company(name);
+        var company = snapshot.getCompany();
         var accounts = snapshot.getAccounts();
-        persistEntities(company, snapshot.getAccounts());
+        persistEntities(company, accounts);
         return new ParseResult("ember", ParseResult.COMPLETE);
     }
 
     private ParseResult fromNorthStar(final NorthstarSnapshot snapshot) {
-        var name = snapshot.getConnectionId();
-        var company = new Company(name);
-        persistEntities(company, Collections.emptyList());
+        var company = snapshot.getCompany();
+        var accounts = snapshot.getAccounts();
+        persistEntities(company, accounts);
         return new ParseResult("north-star", ParseResult.COMPLETE);
     }
 
     private ParseResult fromPaperLedger(final PaperLedgerSnapshot snapshot) {
-        var name = snapshot.getSource().connection();
-        var company = new Company(name);
-        persistEntities(company, Collections.emptyList());
+        var company = snapshot.getCompany();
+        var accounts = snapshot.getAccounts();
+        persistEntities(company, accounts);
         return new ParseResult("paper-ledger", ParseResult.COMPLETE);
     }
 
     private void persistEntities(final Company company, final List<Account> accounts) {
-        companyService.persistCompany(company);
+        var persistedCompany = companyService.persistCompany(company);
+        var mappedAccounts = accounts.stream().peek(account -> account.setCompany(persistedCompany)).toList();
+        mappedAccounts.forEach(a -> {
+            System.out.println(a.isStatus());
+        });
+        accountService.persistAccounts(mappedAccounts);
     }
 }

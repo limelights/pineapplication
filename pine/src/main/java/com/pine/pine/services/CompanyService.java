@@ -2,6 +2,7 @@ package com.pine.pine.services;
 
 import com.pine.pine.models.Company;
 import com.pine.pine.repositories.CompanyRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,11 +16,12 @@ public class CompanyService {
         this.companyRepository = companyRepository;
     }
 
-    public void persistCompany(final Company company) {
-        companyRepository.upsert(company);
+    public Company persistCompany(final Company company) {
+        return companyRepository.findByName(company.getName())
+                .orElseGet(() -> companyRepository.save(company));
     }
 
     public List<Company> getAll() {
-        return companyRepository.findAll();
+        return companyRepository.findAll(Sort.by("id"));
     }
 }
