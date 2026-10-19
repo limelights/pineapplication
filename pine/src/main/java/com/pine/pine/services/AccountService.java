@@ -17,8 +17,11 @@ import java.util.stream.Collectors;
 public class AccountService {
     private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    private final AccountAuditLogService accountAuditLogService;
+
+    public AccountService(final AccountRepository accountRepository, final AccountAuditLogService accountAuditLogService) {
         this.accountRepository = accountRepository;
+        this.accountAuditLogService = accountAuditLogService;
     }
 
     public Account createAccountFromSnapshot(final EmberSnapshot snapshot) {
@@ -38,14 +41,28 @@ public class AccountService {
         var incomingKeys = accounts.stream()
                 .map(Account::getKey)
                 .collect(Collectors.toSet());
-        var removedAccounts = accountRepository.findByKeyProviderAndKeyConnectionId(provider, connectionId).stream()
-                .filter(account -> !incomingKeys.contains(account.getKey()))
-                .toList();
+        if (accountRepository != null) {
+            var accountsScheduledForRemoval = accountRepository.findByKeyProviderAndKeyConnectionId(provider, connectionId).stream()
+                    .filter(account -> !incomingKeys.contains(account.getKey()))
+                    .toList();
 
-        // Ember stores an archive flag; the other providers store an active flag.
-        removedAccounts.forEach(account -> account.setStatus("ember".equals(provider)));
-        accountRepository.saveAll(removedAccounts);
-        accountRepository.saveAll(accounts);
+            // Ember stores an archive flag; the other providers store an active flag.
+            accountsScheduledForRemoval.forEach(account -> account.setStatus("ember".equals(provider)));
+
+
+            // Todo: Use transaction here to roll back auditlogs, if needed together with failed accounting.
+
+            accountRepository.saveAll(accountsScheduledForRemoval);
+            accountRepository.saveAll(accounts);
+
+            accountsScheduledForRemoval.forEach(account -> {
+                accountAuditLogService.produceAuditLog(account, "Service detected slated for removal");
+            });
+
+            accounts.forEach(a -> {
+                accountAuditLogService.produceAuditLog(a, "Service ingested account successfully");
+            });
+        }
     }
 
     public List<Account> getByCompanyId(final Company company) {

@@ -19,6 +19,6 @@ public class ImportServiceTest {
 
 
         final ImportService importService = new ImportService(accountService, companyService);
-        importService.fromEmber(snap);
+        importService.importSnapshot(snap);
     }
 }

@@ -65,9 +65,6 @@ public class ImportService {
                                  final List<Account> accounts) {
         var persistedCompany = companyService.persistCompany(company);
         var mappedAccounts = accounts.stream().peek(account -> account.setCompany(persistedCompany)).toList();
-        mappedAccounts.forEach(a -> {
-            System.out.println(a.isStatus());
-        });
         accountService.synchronizeAccounts(provider, connectionId, mappedAccounts);
     }
 }

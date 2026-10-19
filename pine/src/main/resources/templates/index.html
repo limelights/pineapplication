@@ -8,45 +8,46 @@
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            padding: 2rem;
+            padding: 5px;
             color: #20242a;
             background: #f5f6f8;
-            font: 1rem/1.5 system-ui, sans-serif;
+            font: 12px/1.3 system-ui, sans-serif;
         }
-        main { max-width: 100rem; margin: 0 auto; }
-        h2 { margin: 0; font-size: 1.25rem; overflow-wrap: anywhere; }
-        p { margin: 0.5rem 0; }
-        code { font-size: 0.9em; overflow-wrap: anywhere; }
+        main { width: 100%; margin: 0 auto; }
+        h2 { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
+        p { margin: 5px 0; }
+        code { font-size: 1em; overflow-wrap: anywhere; }
         .company {
-            margin-bottom: 1.5rem;
+            margin-bottom: 5px;
             border: 1px solid #cbd1d9;
             border-radius: 0.5rem;
             background: white;
             overflow: hidden;
         }
-        .company-header { padding: 1rem 1.25rem; }
+        .company-header { padding: 5px; }
         .company-details { color: #48515f; overflow-wrap: anywhere; }
-        .empty { padding: 0 1.25rem 1rem; }
+        .empty { padding: 5px; }
         .account-table { overflow-x: auto; }
         .account-table:focus-visible { outline: 3px solid #2457b2; outline-offset: -3px; }
-        table { width: 100%; min-width: 48rem; border-collapse: collapse; table-layout: fixed; }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         th, td {
-            padding: 0.8rem 1rem;
+            padding: 5px;
             border-top: 1px solid #dce0e6;
             text-align: left;
             vertical-align: top;
             overflow-wrap: anywhere;
         }
-        th { background: #e9edf2; font-size: 0.9rem; }
-        th:first-child { width: 40%; }
-        th:nth-child(2) { width: 25%; }
-        th:nth-child(3) { width: 25%; }
-        th:last-child { width: 10%; }
+        th { background: #e9edf2; font-size: 12px; }
+        table.accounts th:first-child { width: 40%; }
+        table.accounts th:nth-child(2) { width: 22%; }
+        table.accounts th:nth-child(3) { width: 23%; }
+        table.accounts th:nth-child(4) { width: 8%; }
+        table.accounts th:last-child { width: 7%; }
+        table.audit-log th:first-child { width: 8%; }
+        table.audit-log th:nth-child(2) { width: 40%; }
+        table.audit-log th:nth-child(3) { width: 22%; }
+        table.audit-log th:last-child { width: 30%; }
         tbody tr:nth-child(even) { background: #f7f8fa; }
-        @media (max-width: 40rem) {
-            body { padding: 1rem; }
-            .company-header { padding: 1rem; }
-        }
     </style>
 </head>
 <body>
@@ -65,13 +66,14 @@
             <p class="empty" th:if="${#lists.isEmpty(accounts)}">No accounts yet.</p>
             <div class="account-table" th:unless="${#lists.isEmpty(accounts)}"
                  role="region" tabindex="0" th:attr="aria-label=${'Accounts for ' + company.name}">
-                <table>
+                <table class="accounts">
                     <thead>
                         <tr>
                             <th scope="col">Composite key</th>
                             <th scope="col">Account ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Revision</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -83,6 +85,33 @@
                                 <span th:text="${account.key.provider == 'ember' ? (account.status ? 'Inactive' : 'Active') : (account.status ? 'Active' : 'Inactive')}"></span>
                             </td>
                             <td th:text="${account.getRevision()}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="company" aria-labelledby="audit-log-heading">
+            <header class="company-header">
+                <h2 id="audit-log-heading">Audit log</h2>
+            </header>
+            <p class="empty" th:if="${#lists.isEmpty(auditLogs)}">No audit log entries yet.</p>
+            <div class="account-table" th:unless="${#lists.isEmpty(auditLogs)}"
+                 role="region" tabindex="0" aria-label="Audit log">
+                <table class="audit-log">
+                    <thead>
+                        <tr>
+                            <th scope="col">Log ID</th>
+                            <th scope="col">Composite account key</th>
+                            <th scope="col">Current account name</th>
+                            <th scope="col">Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="entry : ${auditLogs}">
+                            <td th:text="${entry.id}"></td>
+                            <td><code th:text="${entry.account == null ? '—' : '(' + entry.account.key.provider + ', ' + entry.account.key.connectionId + ', ' + entry.account.key.externalId + ')'}"></code></td>
+                            <td th:text="${entry.account == null ? '—' : entry.account.name}"></td>
+                            <td th:text="${entry.reason}"></td>
                         </tr>
                     </tbody>
                 </table>

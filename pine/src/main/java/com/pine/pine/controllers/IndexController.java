@@ -1,6 +1,7 @@
 package com.pine.pine.controllers;
 
 import com.pine.pine.models.Account;
+import com.pine.pine.services.AccountAuditLogService;
 import com.pine.pine.services.AccountService;
 import com.pine.pine.services.CompanyService;
 import org.springframework.stereotype.Controller;
@@ -15,10 +16,13 @@ public class IndexController {
 
     private final CompanyService companyService;
     private final AccountService accountService;
+    private final AccountAuditLogService accountAuditLogService;
 
-    public IndexController(final CompanyService companyService, final AccountService accountService) {
+    public IndexController(final CompanyService companyService, final AccountService accountService,
+                           final AccountAuditLogService accountAuditLogService) {
         this.companyService = companyService;
         this.accountService = accountService;
+        this.accountAuditLogService = accountAuditLogService;
     }
 
     @GetMapping(path = "/")
@@ -30,6 +34,7 @@ public class IndexController {
         }
         model.addAttribute("companies", companies);
         model.addAttribute("accountsByCompany", accountsByCompany);
+        model.addAttribute("auditLogs", accountAuditLogService.getAll());
         return "index";
     }
 }
