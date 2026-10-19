@@ -92,7 +92,7 @@ public class NorthstarSnapshot implements Accounting {
     @JsonIgnore
     public List<com.pine.pine.models.Account> getAccounts() {
         if (providerAccounts == null) {
-            return List.of();
+            throw new IllegalArgumentException("A complete Northstar snapshot must include accounts");
         }
         return providerAccounts.stream()
                 .map(nsaccount -> {

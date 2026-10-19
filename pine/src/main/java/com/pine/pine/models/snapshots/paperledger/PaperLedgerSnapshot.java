@@ -69,7 +69,7 @@ public class PaperLedgerSnapshot implements Accounting {
     @JsonIgnore
     public List<Account> getAccounts() {
         if (catalogue == null) {
-            return List.of();
+            throw new IllegalArgumentException("A complete Paperledger snapshot must include catalogue");
         }
         return catalogue.stream()
                 .filter(entry -> "ACCOUNT".equals(entry.type()))

@@ -89,7 +89,7 @@ public class EmberSnapshot implements Accounting {
     @JsonIgnore
     public List<Account> getAccounts() {
         if (ledger == null) {
-            return List.of();
+            throw new IllegalArgumentException("A complete Ember snapshot must include ledger");
         }
         return ledger.values().stream()
                 .map(entry -> {

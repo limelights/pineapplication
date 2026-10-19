@@ -43,30 +43,31 @@ public class ImportService {
     private ParseResult fromEmber(final EmberSnapshot snapshot) {
         var company = snapshot.getCompany();
         var accounts = snapshot.getAccounts();
-        persistEntities(company, accounts);
+        persistEntities(company, "ember", snapshot.getInstallation(), accounts);
         return new ParseResult("ember", ParseResult.COMPLETE);
     }
 
     private ParseResult fromNorthStar(final NorthstarSnapshot snapshot) {
         var company = snapshot.getCompany();
         var accounts = snapshot.getAccounts();
-        persistEntities(company, accounts);
+        persistEntities(company, "northstar", snapshot.getConnectionId(), accounts);
         return new ParseResult("north-star", ParseResult.COMPLETE);
     }
 
     private ParseResult fromPaperLedger(final PaperLedgerSnapshot snapshot) {
         var company = snapshot.getCompany();
         var accounts = snapshot.getAccounts();
-        persistEntities(company, accounts);
+        persistEntities(company, "paperledger", snapshot.getSource().connection(), accounts);
         return new ParseResult("paper-ledger", ParseResult.COMPLETE);
     }
 
-    private void persistEntities(final Company company, final List<Account> accounts) {
+    private void persistEntities(final Company company, final String provider, final String connectionId,
+                                 final List<Account> accounts) {
         var persistedCompany = companyService.persistCompany(company);
         var mappedAccounts = accounts.stream().peek(account -> account.setCompany(persistedCompany)).toList();
         mappedAccounts.forEach(a -> {
             System.out.println(a.isStatus());
         });
-        accountService.persistAccounts(mappedAccounts);
+        accountService.synchronizeAccounts(provider, connectionId, mappedAccounts);
     }
 }

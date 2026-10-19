@@ -8,8 +8,10 @@ import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
 import com.pine.pine.repositories.AccountRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
@@ -31,7 +33,18 @@ public class AccountService {
         return snapshot.getAccounts().getFirst();
     }
 
-    public void persistAccounts(List<Account> accounts) {
+    @Transactional
+    public void synchronizeAccounts(String provider, String connectionId, List<Account> accounts) {
+        var incomingKeys = accounts.stream()
+                .map(Account::getKey)
+                .collect(Collectors.toSet());
+        var removedAccounts = accountRepository.findByKeyProviderAndKeyConnectionId(provider, connectionId).stream()
+                .filter(account -> !incomingKeys.contains(account.getKey()))
+                .toList();
+
+        // Ember stores an archive flag; the other providers store an active flag.
+        removedAccounts.forEach(account -> account.setStatus("ember".equals(provider)));
+        accountRepository.saveAll(removedAccounts);
         accountRepository.saveAll(accounts);
     }
 
