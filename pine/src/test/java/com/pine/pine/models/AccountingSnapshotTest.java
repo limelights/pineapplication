@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AccountingSnapshotTest {
     @ParameterizedTest(name = "{0}")
@@ -24,6 +25,21 @@ public class AccountingSnapshotTest {
 
         assertEquals(expectedIds, accounts.stream().map(Account::getId).toList());
         assertEquals(expectedNames, accounts.stream().map(Account::getName).toList());
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("snapshotsFailing")
+    void failsAccountCreationDueToMissingExternalId(
+            String filename,
+            Class<? extends Accounting> snapshotType,
+            List<String> expectedIds) {
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            var snapshot = (Accounting) SnapshotHelper.asSnapshot(filename, snapshotType);
+            var accounts = snapshot.getAccounts();
+
+            assertEquals(expectedIds, accounts.stream().map(Account::getId).toList());
+        });
     }
 
     static Stream<Arguments> snapshots() {
@@ -47,11 +63,15 @@ public class AccountingSnapshotTest {
                 Arguments.of("paper-ledger.43.json", PaperLedgerSnapshot.class,
                         List.of("urn:paper:account:cash", "urn:paper:account:expenses", "urn:paper:account:payables"),
                         List.of("Treasury cash", "Operating expenses reopened", "Trade payables")),
-                Arguments.of("paper-ledger.44.json", PaperLedgerSnapshot.class,
-                        Arrays.asList("urn:paper:account:cash", null),
-                        List.of("Cash changed by quarantined snapshot", "Record without a stable identifier")),
                 Arguments.of("paper-ledger.45.json", PaperLedgerSnapshot.class,
                         List.of("urn:paper:account:cash", "urn:paper:account:payables", "urn:paper:account:expenses"),
                         List.of("Corporate cash", "Trade payables", "Operating expenses reopened")));
+    }
+
+    static Stream<Arguments> snapshotsFailing() {
+        return Stream.of(
+                Arguments.of("paper-ledger.44.json", PaperLedgerSnapshot.class,
+                        Arrays.asList("urn:paper:account:cash", null),
+                        List.of("Cash changed by quarantined snapshot", "Record without a stable identifier")));
     }
 }

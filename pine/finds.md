@@ -3,7 +3,9 @@
 * Missing or empty collections wasnt explicitly stated on how to handle. I've decided to reject in order not to delete data based on incomplete input.
 * Older snapshot revisions undo newer snapshot revisions.
 * Revisions differ between suppliers; either normalize into own model or keep.
-  * Revisions decides if allowed to import new account information.
+  * Revisions decides if allowed to import new account information. 
+  * If superseded versions should become inactive, the behavior is valid. 
+    * Tradeoff is losing their historical active status.
 
 Design choices:
 * All nullpointers are to be avoided with Optionals 
