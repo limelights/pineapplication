@@ -5,7 +5,7 @@
   "ledger": {
     "bank-key": {
       "number": "BANK",
-      "title": "Main settlement bank",
+      "title": "Settlement bank",
       "is_archived": false
     },
     "cost-key": {

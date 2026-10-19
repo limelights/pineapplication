@@ -82,6 +82,7 @@
                             <td>
                                 <span th:text="${account.key.provider == 'ember' ? (account.status ? 'Inactive' : 'Active') : (account.status ? 'Active' : 'Inactive')}"></span>
                             </td>
+                            <td th:text="${account.getRevision()}"></td>
                         </tr>
                     </tbody>
                 </table>

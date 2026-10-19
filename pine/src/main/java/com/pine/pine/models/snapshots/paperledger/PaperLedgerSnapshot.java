@@ -76,6 +76,7 @@ public class PaperLedgerSnapshot implements Accounting {
                 .map(entry -> {
                     final Account account = new Account(entry.displayName().name(),
                             new AccountId("paperledger", source.connection(), entry.uid()));
+                    account.setRevision(getExport().number());
                     account.setStatus(Objects.equals(entry.state, "ACTIVE"));
                     return account;
                 })

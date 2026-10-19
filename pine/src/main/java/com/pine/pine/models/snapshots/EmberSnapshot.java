@@ -94,6 +94,7 @@ public class EmberSnapshot implements Accounting {
         return ledger.values().stream()
                 .map(entry -> {
                     var account = new Account(entry.title(), new AccountId("ember", installation, entry.number()));
+                    account.setRevision(getSerial());
                     account.setStatus(entry.isArchived());
                     return account;
                 })
