@@ -62,7 +62,7 @@ public class Account {
         this.company = company;
     }
 
-    public String getRevision() {
+    public Long getRevision() {
         return key.getRevision();
     }
 

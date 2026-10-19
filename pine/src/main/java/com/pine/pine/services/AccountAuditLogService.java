@@ -18,7 +18,7 @@ public class AccountAuditLogService {
     }
 
     public List<AccountAuditLog> getAll() {
-        return accountAuditLogRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        return accountAuditLogRepository.findAll(Sort.by(Sort.Direction.DESC, "account.key.revision", "id"));
     }
 
     public void produceAuditLog(final Account account, final String reason) {

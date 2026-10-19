@@ -50,8 +50,17 @@ public class AccountService {
             // Ember stores an archive flag; the other providers store an active flag.
             accountsScheduledForRemoval.forEach(account -> account.setStatus("ember".equals(provider)));
 
-
             // Todo: Use transaction here to roll back auditlogs, if needed together with failed accounting.
+
+            accounts.forEach(account -> {
+
+                var latestRevisionsOfAccount =
+                        accountRepository.findFirstByKeyProviderAndKeyConnectionIdAndKeyExternalIdOrderByKeyRevisionDesc(
+                                provider, connectionId, account.getKey().getExternalId()
+                        );
+                latestRevisionsOfAccount.ifPresent(value -> account.setDescription(value.getDescription()));
+            });
+
 
             accountRepository.saveAll(accountsScheduledForRemoval);
             accountRepository.saveAll(accounts);
@@ -68,7 +77,8 @@ public class AccountService {
 
     public List<Account> getByCompanyId(final Company company) {
         return accountRepository.findByCompany(company,
-                Sort.by("key.provider", "key.connectionId", "key.externalId"));
+                Sort.by(Sort.Direction.DESC, "key.revision")
+                        .and(Sort.by("key.provider", "key.connectionId", "key.externalId")));
     }
 
     public Account getByAccountId(final AccountId accountId) {

@@ -20,21 +20,21 @@ public class AccountId implements Serializable {
     private String externalId;
 
     @Column(name = "revision", nullable = false)
-    private String revision;
+    private Long revision;
 
     protected AccountId() {
     }
 
-    public AccountId(final String provider, final String connectionId, final String externalId, final String revision) {
+    public AccountId(final String provider, final String connectionId, final String externalId, final Long revision) {
         this.provider = requireNonBlank(provider, "provider");
         this.connectionId = requireNonBlank(connectionId, "connectionId");
         this.externalId = requireNonBlank(externalId, "externalId");
-        this.revision = requireNonBlank(revision, "revision");
+        this.revision = requireNonNull(revision, "revision");
     }
 
     public static AccountId fromString(final String accountId) {
         final String[] splits = accountId.split("_");
-        return new AccountId(splits[0], splits[1], splits[2], splits[3]);
+        return new AccountId(splits[0], splits[1], splits[2], Long.parseLong(splits[3]));
     }
 
     public String getProvider() {
@@ -49,7 +49,7 @@ public class AccountId implements Serializable {
         return externalId;
     }
 
-    public String getRevision() { return revision; }
+    public Long getRevision() { return revision; }
 
     public String asSlug() {
         return String.format("%s_%s_%s_%s", this.provider, this.connectionId, this.externalId, this.revision);
@@ -74,8 +74,15 @@ public class AccountId implements Serializable {
         return Objects.hash(provider, connectionId, externalId, revision);
     }
 
-    private static String requireNonBlank(String value, String field) {
+    private static String requireNonBlank(final String value, final String field) {
         if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(field + " must not be blank");
+        }
+        return value;
+    }
+
+    private static Long requireNonNull(final Long value, final String field) {
+        if (value == null) {
             throw new IllegalArgumentException(field + " must not be blank");
         }
         return value;
