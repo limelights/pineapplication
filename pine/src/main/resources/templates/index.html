@@ -53,8 +53,6 @@
         .description-form textarea { width: 200px; max-width: 100%; padding: 5px; font: inherit; resize: vertical; }
         .description-form button { padding: 5px; font: inherit; cursor: pointer; }
         .account-description { display: block; margin-top: 5px; font-size: 11px; text-align: right; white-space: pre-wrap; }
-        .older-revisions { margin: 0; padding: 5px; list-style: none; }
-        .older-revisions li { padding: 5px; border-top: 1px solid #dce0e6; overflow-wrap: anywhere; }
     </style>
 </head>
 <body>
@@ -111,16 +109,35 @@
             </div>
             <h3>Older revisions</h3>
             <p class="empty" th:if="${#lists.isEmpty(olderAccounts)}">No older revisions.</p>
-            <ul class="older-revisions" th:unless="${#lists.isEmpty(olderAccounts)}">
-                <li th:each="account : ${olderAccounts}">
-                    <code th:text="${'(' + account.key.provider + ', ' + account.key.connectionId + ', ' + account.key.externalId + ')'}"></code>
-                    · <span th:text="${account.name}"></span>
-                    · Revision <span th:text="${account.getRevision()}"></span>
-                    · <span th:text="${account.key.provider == 'ember' ? (account.status ? 'Inactive' : 'Active') : (account.status ? 'Active' : 'Inactive')}"></span>
-                    <small class="account-description" th:if="${!#strings.isEmpty(account.description)}"
-                           th:text="${account.description}"></small>
-                </li>
-            </ul>
+            <div class="account-table" th:unless="${#lists.isEmpty(olderAccounts)}"
+                 role="region" tabindex="0" th:attr="aria-label=${'Older account revisions for ' + company.name}">
+                <table class="accounts">
+                    <thead>
+                        <tr>
+                            <th scope="col">Composite key</th>
+                            <th scope="col">Account ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Revision</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="account : ${olderAccounts}">
+                            <td>
+                                <code th:text="${'(' + account.key.provider + ', ' + account.key.connectionId + ', ' + account.key.externalId + ')'}"></code>
+                                <small class="account-description" th:if="${!#strings.isEmpty(account.description)}"
+                                       th:text="${account.description}"></small>
+                            </td>
+                            <td><code th:text="${account.id}"></code></td>
+                            <td th:text="${account.name}"></td>
+                            <td>
+                                <span th:text="${account.key.provider == 'ember' ? (account.status ? 'Inactive' : 'Active') : (account.status ? 'Active' : 'Inactive')}"></span>
+                            </td>
+                            <td th:text="${account.getRevision()}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
         <section class="company" aria-labelledby="audit-log-heading">
             <header class="company-header">
