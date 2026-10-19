@@ -53,12 +53,16 @@ public class AccountService {
             // Todo: Use transaction here to roll back auditlogs, if needed together with failed accounting.
 
             accounts.forEach(account -> {
-
                 var latestRevisionsOfAccount =
                         accountRepository.findFirstByKeyProviderAndKeyConnectionIdAndKeyExternalIdOrderByKeyRevisionDesc(
                                 provider, connectionId, account.getKey().getExternalId()
                         );
-                latestRevisionsOfAccount.ifPresent(value -> account.setDescription(value.getDescription()));
+                if (latestRevisionsOfAccount.isPresent()) {
+                    if (latestRevisionsOfAccount.get().getRevision() > account.getRevision()) {
+                        throw new IllegalArgumentException("Account Revision is older than current revision");
+                    }
+                    account.setDescription(latestRevisionsOfAccount.get().getDescription());
+                }
             });
 
 
