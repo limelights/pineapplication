@@ -96,8 +96,9 @@ public class NorthstarSnapshot implements Accounting {
         }
         return providerAccounts.stream()
                 .map(nsaccount -> {
-                    var account = new Account(nsaccount.name(), new AccountId("northstar", connectionId, nsaccount.id()));
-                    account.setRevision(getGeneration());
+                    var account = new Account(
+                            nsaccount.name(),
+                            new AccountId("northstar", connectionId, nsaccount.id(), String.valueOf(getGeneration())));
                     account.setStatus(nsaccount.enabled());
                     return account;
                 })

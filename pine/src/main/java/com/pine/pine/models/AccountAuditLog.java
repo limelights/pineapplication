@@ -13,7 +13,8 @@ public class AccountAuditLog {
     @JoinColumns({
             @JoinColumn(name = "account_provider", referencedColumnName = "provider"),
             @JoinColumn(name = "account_connection_id", referencedColumnName = "connection_id"),
-            @JoinColumn(name = "account_external_id", referencedColumnName = "external_id")
+            @JoinColumn(name = "account_external_id", referencedColumnName = "external_id"),
+            @JoinColumn(name = "account_revision", referencedColumnName = "revision")
     })
     private Account account;
 

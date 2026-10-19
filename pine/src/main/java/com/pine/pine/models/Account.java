@@ -19,9 +19,6 @@ public class Account {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @Column(nullable = false)
-    private Long revision;
-
     protected Account() {
     }
 
@@ -62,11 +59,7 @@ public class Account {
         this.company = company;
     }
 
-    public Long getRevision() {
-        return revision;
-    }
-
-    public void setRevision(Long revision) {
-        this.revision = revision;
+    public String getRevision() {
+        return key.getRevision();
     }
 }

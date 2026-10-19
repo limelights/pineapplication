@@ -19,13 +19,17 @@ public class AccountId implements Serializable {
     @Column(name = "external_id", nullable = false)
     private String externalId;
 
+    @Column(name = "revision", nullable = false)
+    private String revision;
+
     protected AccountId() {
     }
 
-    public AccountId(String provider, String connectionId, String externalId) {
+    public AccountId(final String provider, final String connectionId, final String externalId, final String revision) {
         this.provider = requireNonBlank(provider, "provider");
         this.connectionId = requireNonBlank(connectionId, "connectionId");
         this.externalId = requireNonBlank(externalId, "externalId");
+        this.revision = requireNonBlank(revision, "revision");
     }
 
     public String getProvider() {
@@ -40,6 +44,8 @@ public class AccountId implements Serializable {
         return externalId;
     }
 
+    public String getRevision() { return revision; }
+
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -50,12 +56,13 @@ public class AccountId implements Serializable {
         }
         return Objects.equals(provider, accountId.provider)
                 && Objects.equals(connectionId, accountId.connectionId)
-                && Objects.equals(externalId, accountId.externalId);
+                && Objects.equals(externalId, accountId.externalId)
+                && Objects.equals(revision, accountId.revision);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(provider, connectionId, externalId);
+        return Objects.hash(provider, connectionId, externalId, revision);
     }
 
     private static String requireNonBlank(String value, String field) {
