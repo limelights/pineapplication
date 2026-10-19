@@ -3,6 +3,7 @@ package com.pine.pine.models.snapshots;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pine.pine.models.Account;
+import com.pine.pine.models.AccountId;
 import com.pine.pine.models.Accounting;
 import com.pine.pine.models.Company;
 
@@ -95,7 +96,7 @@ public class NorthstarSnapshot implements Accounting {
         }
         return providerAccounts.stream()
                 .map(nsaccount -> {
-                    var account = new Account(nsaccount.name(), nsaccount.id());
+                    var account = new Account(nsaccount.name(), new AccountId("northstar", connectionId, nsaccount.id()));
                     account.setStatus(nsaccount.enabled());
                     return account;
                 })

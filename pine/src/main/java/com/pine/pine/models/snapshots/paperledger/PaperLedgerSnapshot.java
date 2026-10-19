@@ -2,6 +2,7 @@ package com.pine.pine.models.snapshots.paperledger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pine.pine.models.Account;
+import com.pine.pine.models.AccountId;
 import com.pine.pine.models.Accounting;
 import com.pine.pine.models.Company;
 import tools.jackson.databind.annotation.JsonDeserialize;
@@ -73,7 +74,8 @@ public class PaperLedgerSnapshot implements Accounting {
         return catalogue.stream()
                 .filter(entry -> "ACCOUNT".equals(entry.type()))
                 .map(entry -> {
-                    final Account account = new Account(entry.displayName().name(), entry.uid());
+                    final Account account = new Account(entry.displayName().name(),
+                            new AccountId("paperledger", source.connection(), entry.uid()));
                     account.setStatus(Objects.equals(entry.state, "ACTIVE"));
                     return account;
                 })

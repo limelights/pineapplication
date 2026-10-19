@@ -1,27 +1,22 @@
 package com.pine.pine.models;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "accounts")
 public class Account {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long uid;
+    @EmbeddedId
+    private AccountId key;
 
-    @Column(unique = true)
     private String name;
-
-    @Column(nullable = false)
-    private String id;
 
     @Column(nullable = false)
     private boolean status;
@@ -33,22 +28,13 @@ public class Account {
     protected Account() {
     }
 
-    public Account(final String name, final String id) {
-        this(null, name, id);
-    }
-
-    public Account(final Long uid, final String name, final String id) {
-        this.uid = uid;
+    public Account(final String name, final AccountId key) {
+        this.key = Objects.requireNonNull(key, "key");
         this.name = name;
-        this.id = id;
     }
 
-    public Long getUid() {
-        return uid;
-    }
-
-    public void setUid(final Long uid) {
-        this.uid = uid;
+    public AccountId getKey() {
+        return key;
     }
 
     public String getName() {
@@ -60,11 +46,7 @@ public class Account {
     }
 
     public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        return key.getExternalId();
     }
 
     public boolean isStatus() {

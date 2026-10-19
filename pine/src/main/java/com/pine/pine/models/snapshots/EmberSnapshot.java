@@ -3,6 +3,7 @@ package com.pine.pine.models.snapshots;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pine.pine.models.Account;
+import com.pine.pine.models.AccountId;
 import com.pine.pine.models.Accounting;
 import com.pine.pine.models.Company;
 
@@ -92,7 +93,7 @@ public class EmberSnapshot implements Accounting {
         }
         return ledger.values().stream()
                 .map(entry -> {
-                    var account = new Account(entry.title(), entry.number());
+                    var account = new Account(entry.title(), new AccountId("ember", installation, entry.number()));
                     account.setStatus(entry.isArchived());
                     return account;
                 })

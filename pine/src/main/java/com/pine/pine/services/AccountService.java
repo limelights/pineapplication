@@ -6,6 +6,7 @@ import com.pine.pine.models.snapshots.EmberSnapshot;
 import com.pine.pine.models.snapshots.NorthstarSnapshot;
 import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
 import com.pine.pine.repositories.AccountRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,23 +20,15 @@ public class AccountService {
     }
 
     public Account createAccountFromSnapshot(final EmberSnapshot snapshot) {
-        var ledgerAccount = snapshot.getLedger().entrySet().iterator().next();
-        var account = ledgerAccount.getValue();
-        return createAccount(account.number(), account.title());
+        return snapshot.getAccounts().getFirst();
     }
 
     public Account createAccountFromSnapshot(final NorthstarSnapshot snapshot) {
-        var account = snapshot.getAccounts().getFirst();
-        return createAccount(account.getId(), account.getName());
+        return snapshot.getAccounts().getFirst();
     }
 
     public Account createAccountFromSnapshot(final PaperLedgerSnapshot snapshot) {
-        var account = snapshot.getCatalogue().getFirst();
-        return createAccount(account.uid(), account.displayName().name());
-    }
-
-    private Account createAccount(String id, String name) {
-        return new Account(name, id);
+        return snapshot.getAccounts().getFirst();
     }
 
     public void persistAccounts(List<Account> accounts) {
@@ -43,6 +36,7 @@ public class AccountService {
     }
 
     public List<Account> getByCompanyId(final Company company) {
-        return accountRepository.findByCompanyOrderByUidAsc(company);
+        return accountRepository.findByCompany(company,
+                Sort.by("key.provider", "key.connectionId", "key.externalId"));
     }
 }
