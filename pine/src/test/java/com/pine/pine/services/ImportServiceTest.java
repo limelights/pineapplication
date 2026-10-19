@@ -17,7 +17,8 @@ public class ImportServiceTest {
         final AccountRepository mockAccountRepository = mock(AccountRepository.class);
         final CompanyRepository mockCompanyRepository = mock(CompanyRepository.class);
         final AccountAuditLogService mockAccountAuditLogService = mock(AccountAuditLogService.class);
-        final AccountService accountService = new AccountService(mockAccountRepository, mockAccountAuditLogService);
+        final RevisionStateService mockRevisionStateService = mock(RevisionStateService.class);
+        final AccountService accountService = new AccountService(mockAccountRepository, mockAccountAuditLogService, mockRevisionStateService);
         final CompanyService companyService = new CompanyService(mockCompanyRepository);
 
         var snap = (EmberSnapshot) SnapshotHelper.asSnapshot("ember-accounting.9001.json", EmberSnapshot.class);
