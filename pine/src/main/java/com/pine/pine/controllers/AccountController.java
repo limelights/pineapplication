@@ -28,7 +28,7 @@ public class AccountController {
     }
 
     @PostMapping("/{accountId}/description")
-    public ResponseEntity<Void> updateDescription(@PathVariable String accountId, @RequestBody String description) {
+    public ResponseEntity<Void> updateDescription(@PathVariable String accountId, @RequestParam("description") String description) {
         final AccountId accountId1 = AccountId.fromString(accountId);
         final Account account = accountService.getByAccountId(accountId1);
         account.setDescription(description);
