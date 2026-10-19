@@ -10,3 +10,10 @@
 Design choices:
 * All nullpointers are to be avoided with Optionals 
 * Revisions are always roll forward to keep old accounts from surfacing.
+
+Unfinished work:
+* Dimension and dimension values.
+  * They follow the rough outline as the accounts.
+    * Create a wrapper or a similar behavior interface. Store in database.
+      * The Question becomes: are all dimensions viable for all types of account. Roughly yes, most implements regionality.
+* Accounts do *not* provide any functionality around what accounts contain. 
