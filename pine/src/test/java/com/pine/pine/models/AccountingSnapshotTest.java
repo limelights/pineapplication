@@ -3,6 +3,7 @@ package com.pine.pine.models;
 import com.pine.pine.models.snapshots.EmberSnapshot;
 import com.pine.pine.models.snapshots.NorthstarSnapshot;
 import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
+import com.pine.pine.services.AccountAuditLogService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,14 +15,16 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 public class AccountingSnapshotTest {
+    final AccountAuditLogService accountAuditLogService = mock(AccountAuditLogService.class);
     @ParameterizedTest(name = "{0}")
     @MethodSource("snapshots")
     void extractsProviderAccounts(String filename, Class<? extends Accounting> snapshotType,
                                  List<String> expectedIds, List<String> expectedNames) throws IOException {
         var snapshot = (Accounting) SnapshotHelper.asSnapshot(filename, snapshotType);
-        var accounts = snapshot.getAccounts();
+        var accounts = snapshot.getAccounts(accountAuditLogService);
 
         assertEquals(expectedIds, accounts.stream().map(Account::getId).toList());
         assertEquals(expectedNames, accounts.stream().map(Account::getName).toList());
@@ -36,7 +39,7 @@ public class AccountingSnapshotTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
             var snapshot = (Accounting) SnapshotHelper.asSnapshot(filename, snapshotType);
-            var accounts = snapshot.getAccounts();
+            var accounts = snapshot.getAccounts(accountAuditLogService);
 
             assertEquals(expectedIds, accounts.stream().map(Account::getId).toList());
         });

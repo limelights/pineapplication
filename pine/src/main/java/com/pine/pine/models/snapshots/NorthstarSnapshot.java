@@ -6,8 +6,11 @@ import com.pine.pine.models.Account;
 import com.pine.pine.models.AccountId;
 import com.pine.pine.models.Accounting;
 import com.pine.pine.models.Company;
+import com.pine.pine.services.AccountAuditLogService;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class NorthstarSnapshot implements Accounting {
     private String provider;
@@ -90,19 +93,27 @@ public class NorthstarSnapshot implements Accounting {
 
     @Override
     @JsonIgnore
-    public List<com.pine.pine.models.Account> getAccounts() {
+    public List<com.pine.pine.models.Account> getAccounts(final AccountAuditLogService accountAuditLogService) {
         if (providerAccounts == null) {
             throw new IllegalArgumentException("A complete Northstar snapshot must include accounts");
         }
         return providerAccounts.stream()
-                .map(nsaccount -> {
-                    var account = new Account(
-                            nsaccount.name(),
-                            new AccountId("northstar", connectionId, nsaccount.id(), getGeneration()));
-                    account.setStatus(nsaccount.enabled());
-                    return account;
+                .map(entry -> {
+                    try {
+                        var account = new Account(
+                                entry.name(),
+                                new AccountId("northstar", connectionId, entry.id(), getGeneration()));
+                        account.setStatus(entry.enabled());
+                        return account;
+                    } catch (Exception e) {
+                        accountAuditLogService.produceAuditLog(
+                                null,
+                                String.format("Account %s was not able to be ingested", entry.id()));
+                        return null;
+                    }
                 })
-                .toList();
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override

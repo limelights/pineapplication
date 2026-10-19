@@ -24,7 +24,7 @@ public class ImportServiceTest {
         var snap = (EmberSnapshot) SnapshotHelper.asSnapshot("ember-accounting.9001.json", EmberSnapshot.class);
 
 
-        final ImportService importService = new ImportService(accountService, companyService);
+        final ImportService importService = new ImportService(accountService, companyService, mockAccountAuditLogService);
         importService.importSnapshot(snap);
     }
 }

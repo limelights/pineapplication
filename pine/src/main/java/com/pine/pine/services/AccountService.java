@@ -30,15 +30,15 @@ public class AccountService {
     }
 
     public Account createAccountFromSnapshot(final EmberSnapshot snapshot) {
-        return snapshot.getAccounts().getFirst();
+        return snapshot.getAccounts(accountAuditLogService).getFirst();
     }
 
     public Account createAccountFromSnapshot(final NorthstarSnapshot snapshot) {
-        return snapshot.getAccounts().getFirst();
+        return snapshot.getAccounts(accountAuditLogService).getFirst();
     }
 
     public Account createAccountFromSnapshot(final PaperLedgerSnapshot snapshot) {
-        return snapshot.getAccounts().getFirst();
+        return snapshot.getAccounts(accountAuditLogService).getFirst();
     }
 
     @Transactional

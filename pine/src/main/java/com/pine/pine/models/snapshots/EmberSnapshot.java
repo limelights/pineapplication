@@ -6,9 +6,12 @@ import com.pine.pine.models.Account;
 import com.pine.pine.models.AccountId;
 import com.pine.pine.models.Accounting;
 import com.pine.pine.models.Company;
+import com.pine.pine.services.AccountAuditLogService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class EmberSnapshot implements Accounting {
     private String installation;
@@ -87,19 +90,27 @@ public class EmberSnapshot implements Accounting {
 
     @Override
     @JsonIgnore
-    public List<Account> getAccounts() {
+    public List<Account> getAccounts(final AccountAuditLogService accountAuditLogService) {
         if (ledger == null) {
             throw new IllegalArgumentException("A complete Ember snapshot must include ledger");
         }
         return ledger.values().stream()
                 .map(entry -> {
-                    var account = new Account(
-                            entry.title(),
-                            new AccountId("ember", installation, entry.number(), getSerial()));
-                    account.setStatus(entry.isArchived());
-                    return account;
+                    try {
+                        var account = new Account(
+                                entry.title(),
+                                new AccountId("ember", installation, entry.number(), getSerial()));
+                        account.setStatus(entry.isArchived());
+                        return account;
+                    } catch (Exception e) {
+                        accountAuditLogService.produceAuditLog(
+                                null,
+                                String.format("Account %s was not able to be ingested", entry.number()));
+                        return null;
+                    }
                 })
-                .toList();
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override

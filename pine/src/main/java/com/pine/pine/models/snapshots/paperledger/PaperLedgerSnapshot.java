@@ -5,10 +5,13 @@ import com.pine.pine.models.Account;
 import com.pine.pine.models.AccountId;
 import com.pine.pine.models.Accounting;
 import com.pine.pine.models.Company;
+import com.pine.pine.services.AccountAuditLogService;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class PaperLedgerSnapshot implements Accounting {
     private Source source;
@@ -67,24 +70,30 @@ public class PaperLedgerSnapshot implements Accounting {
 
     @Override
     @JsonIgnore
-    public List<Account> getAccounts() {
+    public List<Account> getAccounts(final AccountAuditLogService accountAuditLogService) {
         if (catalogue == null) {
             throw new IllegalArgumentException("A complete Paperledger snapshot must include catalogue");
         }
         return catalogue.stream()
                 .filter(entry -> "ACCOUNT".equals(entry.type()))
                 .map(entry -> {
-                    final Account account = new Account(
-                            entry.displayName().name(),
-                            new AccountId(
-                                    "paperledger",
-                                    source.connection(),
-                                    entry.uid(),
-                                    getExport().number()));
-                    account.setStatus(Objects.equals(entry.state, "ACTIVE"));
-                    return account;
+                    try {
+                        final Account account = new Account(
+                                entry.displayName().name(),
+                                new AccountId(
+                                        "paperledger",
+                                        source.connection(),
+                                        entry.uid(),
+                                        getExport().number()));
+                        account.setStatus(Objects.equals(entry.state, "ACTIVE"));
+                        return account;
+                    } catch (IllegalArgumentException e) {
+                        accountAuditLogService.produceAuditLog(null, String.format("Account `%s` was not able to be ingested", entry.displayName().name()));
+                        return null;
+                    }
                 })
-                .toList();
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override

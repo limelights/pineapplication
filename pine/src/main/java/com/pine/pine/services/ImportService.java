@@ -18,10 +18,12 @@ public class ImportService {
 
     private final AccountService accountService;
     private final CompanyService companyService;
+    private final AccountAuditLogService accountAuditLogService;
 
-    public ImportService(final AccountService accountService, final CompanyService companyService) {
+    public ImportService(final AccountService accountService, final CompanyService companyService, AccountAuditLogService accountAuditLogService) {
         this.accountService = accountService;
         this.companyService = companyService;
+        this.accountAuditLogService = accountAuditLogService;
     }
 
     @Transactional
@@ -41,31 +43,25 @@ public class ImportService {
     }
 
     private ParseResult fromEmber(final EmberSnapshot snapshot) {
-        var company = snapshot.getCompany();
-        var accounts = snapshot.getAccounts();
-        persistEntities(company, "ember", snapshot.getInstallation(), snapshot.getSerial(), accounts);
+        persistEntities(snapshot, "ember", snapshot.getInstallation(), snapshot.getSerial());
         return new ParseResult("ember", ParseResult.COMPLETE);
     }
 
     private ParseResult fromNorthStar(final NorthstarSnapshot snapshot) {
-        var company = snapshot.getCompany();
-        var accounts = snapshot.getAccounts();
-        persistEntities(company, "northstar", snapshot.getConnectionId(), snapshot.getGeneration(), accounts);
+        persistEntities(snapshot, "northstar", snapshot.getConnectionId(), snapshot.getGeneration());
         return new ParseResult("north-star", ParseResult.COMPLETE);
     }
 
     private ParseResult fromPaperLedger(final PaperLedgerSnapshot snapshot) {
-        var company = snapshot.getCompany();
-        var accounts = snapshot.getAccounts();
-        persistEntities(company, "paperledger", snapshot.getSource().connection(), snapshot.getExport().number(), accounts);
+        persistEntities(snapshot, "paperledger", snapshot.getSource().connection(), snapshot.getExport().number());
         return new ParseResult("paper-ledger", ParseResult.COMPLETE);
     }
 
-    private void persistEntities(final Company company, final String provider, final String connectionId,
-                                 final Long revision,
-                                 final List<Account> accounts) {
-        var persistedCompany = companyService.persistCompany(company);
-        var mappedAccounts = accounts.stream().peek(account -> account.setCompany(persistedCompany)).toList();
+    private void persistEntities(final Accounting snapshot, final String provider, final String connectionId,
+                                 final Long revision) {
+        var parsedAccounts = snapshot.getAccounts(accountAuditLogService);
+        var persistedCompany = companyService.persistCompany(snapshot.getCompany());
+        var mappedAccounts = parsedAccounts.stream().peek(account -> account.setCompany(persistedCompany)).toList();
         accountService.synchronizeAccounts(provider, connectionId, revision, mappedAccounts);
     }
 }
