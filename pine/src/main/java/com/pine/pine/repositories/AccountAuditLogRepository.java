@@ -9,5 +9,7 @@ import java.util.List;
 
 public interface AccountAuditLogRepository extends JpaRepository<AccountAuditLog, Long> {
     List<AccountAuditLog> findByAccount(final Account account);
+
+    List<AccountAuditLog> findByRunIdAndAccountIsNullOrderByIdAsc(String runId);
 }
 

@@ -65,7 +65,8 @@ public class AccountServiceTest {
         when(mockRevisionStateService.findByProviderAndConnectionId("ember", "company-demo"))
                 .thenReturn(Optional.of(acceptedState));
 
-        accountService.synchronizeAccounts("ember", "company-demo", 9001L, List.of(a1));
+        assertEquals(AccountService.SynchronizationResult.REJECTED,
+                accountService.synchronizeAccounts("ember", "company-demo", 9001L, List.of(a1)));
 
         verify(mockAccountAuditLogService).produceAuditLog(
                 null, "Rejected ember/company-demo revision 9001: latest accepted revision is 9002");
@@ -91,7 +92,8 @@ public class AccountServiceTest {
             return null;
         }).when(mockRevisionStateService).saveRevisionState(any());
 
-        accountService.synchronizeAccounts("ember", "company-demo", 9002L, List.of(a2));
+        assertEquals(AccountService.SynchronizationResult.ACCEPTED,
+                accountService.synchronizeAccounts("ember", "company-demo", 9002L, List.of(a2)));
 
         assertNotNull(savedState.get());
         assertEquals("ember", savedState.get().getProvider());
@@ -102,7 +104,8 @@ public class AccountServiceTest {
 
         clearInvocations(mockAccountRepository, mockAccountAuditLogService, mockRevisionStateService);
 
-        accountService.synchronizeAccounts("ember", "company-demo", 9001L, List.of(a1));
+        assertEquals(AccountService.SynchronizationResult.REJECTED,
+                accountService.synchronizeAccounts("ember", "company-demo", 9001L, List.of(a1)));
 
         verify(mockAccountAuditLogService).produceAuditLog(
                 null, "Rejected ember/company-demo revision 9001: latest accepted revision is 9002");

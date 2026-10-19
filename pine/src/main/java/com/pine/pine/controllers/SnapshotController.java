@@ -1,5 +1,6 @@
 package com.pine.pine.controllers;
 
+import com.pine.pine.controllers.responses.ImportResultResponse;
 import com.pine.pine.models.Accounting;
 import com.pine.pine.models.snapshots.EmberSnapshot;
 import com.pine.pine.models.snapshots.NorthstarSnapshot;
@@ -7,12 +8,10 @@ import com.pine.pine.models.snapshots.paperledger.PaperLedgerSnapshot;
 import com.pine.pine.parser.ParseResult;
 import com.pine.pine.services.ImportService;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,6 +36,12 @@ public class SnapshotController {
         } else if (body.containsKey("source")) {
             model = objectMapper.convertValue(body, PaperLedgerSnapshot.class);
         }
-        return importService.importSnapshot(model);
+        var response = importService.importSnapshot(model);
+        return response;
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, path = "/status")
+    public List<ImportResultResponse> importResultList(@PathVariable("company-name") String companyName) {
+        return importService.getImportResults(companyName);
     }
 }

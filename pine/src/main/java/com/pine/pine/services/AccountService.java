@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
+    public enum SynchronizationResult { ACCEPTED, REJECTED }
+
     private final AccountRepository accountRepository;
 
     private final AccountAuditLogService accountAuditLogService;
@@ -42,7 +44,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void synchronizeAccounts(
+    public SynchronizationResult synchronizeAccounts(
             final String provider, final String connectionId, final Long incomingRevision, final List<Account> accounts) {
         if (incomingRevision == null) {
             throw new IllegalArgumentException("Snapshot revision must not be null");
@@ -63,7 +65,7 @@ public class AccountService {
             accountAuditLogService.produceAuditLog(null,
                     "Rejected %s/%s revision %d: latest accepted revision is %d"
                             .formatted(provider, connectionId, incomingRevision, latestRevision));
-            return;
+            return SynchronizationResult.REJECTED;
         }
 
         var incomingKeys = accounts.stream()
@@ -94,6 +96,7 @@ public class AccountService {
 
         revisionState.setRevision(incomingRevision);
         revisionStateService.saveRevisionState(revisionState);
+        return SynchronizationResult.ACCEPTED;
     }
 
     public List<Account> getByCompanyId(final Company company) {

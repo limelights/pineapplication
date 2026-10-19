@@ -21,12 +21,23 @@ public class AccountAuditLog {
     @Column(nullable = false)
     private String reason;
 
+    @Column(name = "run_id")
+    private String runId;
+
     public AccountAuditLog(final Account account, final String reason) {
         this.account = account;
         this.reason = reason;
     }
 
     public AccountAuditLog() {}
+
+    public String getRunId() {
+        return runId;
+    }
+
+    public void setRunId(String runId) {
+        this.runId = runId;
+    }
 
     public Account getAccount() {
         return account;
